@@ -13,7 +13,7 @@
 ######################################################################################################################
 -->
 <template>
-  <div>
+  <div class="login-div">
     <amplify-authenticator></amplify-authenticator>
   </div>
 </template>
@@ -27,6 +27,8 @@ export default {
     return {};
   },
   mounted() {
+    this.$router.push({ name: "collection" });
+
     AmplifyEventBus.$on("authState", eventInfo => {
       if (eventInfo === "signedIn") {
         this.$router.push({ name: "collection" });
@@ -39,16 +41,24 @@ export default {
     this.getLoginStatus()
   },
   methods: {
-    getLoginStatus () {
+    getLoginStatus() {
+      this.$router.push({ name: "collection" })
+
       this.$Amplify.Auth.currentSession().then(data => {
         this.session = data;
         if (this.session == null) {
           console.log('user must login')
         } else {
-          this.$router.push({name: "collection"})
+          this.$router.push({ name: "collection" })
         }
       })
     }
   }
 };
 </script>
+
+<style scoped>
+.login-div {
+  margin-top: 10%;
+}
+</style>

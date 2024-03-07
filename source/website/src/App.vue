@@ -12,6 +12,8 @@
 #  and limitations under the License.                                                                                #
 ######################################################################################################################
 -->
+
+
 <template>
   <div id="app">
     <router-view />
@@ -19,12 +21,19 @@
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Montserrat', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #2f3440;
   margin-top: 0;
+}
+
+.Button__button___1FrBC:active {
+  background-color: #49bad5 !important;
+
 }
 </style>

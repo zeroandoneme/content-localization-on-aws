@@ -133,10 +133,10 @@
         </b-dropdown-item>
       </b-dropdown>&nbsp;
       <!-- this is the save vocabulary button -->
-      <b-button id="saveTerminology" v-b-tooltip.hover title="Save terminology will open a window where you can create or modify custom terminologies for AWS Translate" size="sm" class="mb-2" @click="showTerminologyConfirmation()">
+      <!-- <b-button id="saveTerminology" v-b-tooltip.hover title="Save terminology will open a window where you can create or modify custom terminologies for AWS Translate" size="sm" class="mb-2" @click="showTerminologyConfirmation()">
         <b-icon icon="card-text" color="white"></b-icon>
         Save terminology
-      </b-button>&nbsp;
+      </b-button>&nbsp; -->
       <!-- this is the save edits button for when workflow complete -->
       <b-button v-if="workflow_status === 'Complete' || workflow_status === 'Error'" id="editCaptions" size="sm" class="mb-2" @click="saveCaptions()">
         <b-icon icon="play" color="white"></b-icon>
