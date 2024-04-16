@@ -25,9 +25,9 @@
             <b-row align-h="center">
               <b-tabs v-if="showVideo === 'show-video'" content-class="mt-3" fill>
                 <b-tab v-if="mediaType !== 'image'" title="Speech Recognition" active @click="
-                  currentView = 'Transcript';
-                speechTabs = 0;
-                ">
+        currentView = 'Transcript';
+      speechTabs = 0;
+      ">
                   <b-tabs v-model="speechTabs" content-class="mt-3" fill>
                     <b-tab title="Transcript" @click="currentView = 'Transcript'" />
                     <b-tab title="Subtitles" @click="currentView = 'Subtitles'" />
@@ -37,9 +37,9 @@
                   </b-tabs>
                 </b-tab>
                 <b-tab title="ML Vision" @click="
-                  currentView = 'LabelObjects';
-                mlTabs = 0;
-                ">
+        currentView = 'LabelObjects';
+      mlTabs = 0;
+      ">
                   <b-container fluid>
                     <b-row>
                       <div>
@@ -47,7 +47,9 @@
                           <b-tab title="Objects" @click="currentView = 'LabelObjects'" />
                           <b-tab title="Celebrities" @click="currentView = 'Celebrities'" />
                           <b-tab title="Moderation" @click="currentView = 'ContentModeration'" />
-                          <b-tab title="Faces" @click="currentView = 'FaceDetection'" />
+                          <b-tab title="Face Detection" @click="currentView = 'FaceDetection'" />
+                          <b-tab title="Face Search" @click="currentView = 'FaceSearch'" />
+
                           <b-tab title="Words" @click="currentView = 'TextDetection'" />
                           <b-tab title="Cues" @click="currentView = 'TechnicalCues'" />
                           <b-tab title="Shots" @click="currentView = 'ShotDetection'" />
@@ -86,21 +88,21 @@
           </div>
           <div v-else>
             <div v-if="videoOptions.sources[0].src === '' ||
-              (videoOptions.captions.length > 0 &&
-                videoOptions.captions.length !== num_caption_tracks) ||
-              (videoOptions.captions.length > 0 &&
-                videoOptions.captions[0].lang === '')
-              ">
+        (videoOptions.captions.length > 0 &&
+          videoOptions.captions.length !== num_caption_tracks) ||
+        (videoOptions.captions.length > 0 &&
+          videoOptions.captions[0].lang === '')
+        ">
               <Loading />
             </div>
             <div v-else>
               <VideoPlayer :options="videoOptions" />
               <div v-if="currentView === 'Transcript' ||
-                currentView === 'Subtitles' ||
-                currentView === 'Translation' ||
-                currentView === 'KeyPhrases' ||
-                currentView === 'Entities'
-                ">
+        currentView === 'Subtitles' ||
+        currentView === 'Translation' ||
+        currentView === 'KeyPhrases' ||
+        currentView === 'Entities'
+        ">
                 <br />
                 <!-- <Waveform /> -->
               </div>
@@ -226,6 +228,14 @@ export default {
       component: new Promise(function (resolve) {
         setTimeout(function () {
           resolve(import("@/components/FaceDetection.vue"));
+        }, 1000);
+      }),
+      loading: Loading,
+    }),
+    FaceSearch: () => ({
+      component: new Promise(function (resolve) {
+        setTimeout(function () {
+          resolve(import("@/components/FaceSearch.vue"));
         }, 1000);
       }),
       loading: Loading,

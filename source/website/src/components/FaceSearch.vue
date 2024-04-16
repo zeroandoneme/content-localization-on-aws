@@ -85,7 +85,7 @@ import Loading from '@/components/Loading.vue'
 import { mapState } from 'vuex'
 
 export default {
-  name: "FaceDetection",
+  name: "FaceSearch",
   components: {
     Loading
   },
@@ -106,7 +106,7 @@ export default {
       count_distinct_labels: 0,
       count_labels: 0,
       isBusy: false,
-      operator: 'face_detection',
+      operator: 'face_search',
       canvasRefreshInterval: undefined,
       timeseries: new Map(),
       selectedLabel: '',
@@ -144,6 +144,7 @@ export default {
     elasticsearch_data: function () {
       this.chartData();
     },
+
   },
   deactivated: function () {
     console.log('activated component:', this.operator);
@@ -197,41 +198,17 @@ export default {
       } else {
         this.lowerConfidence = false;
         for (const item of data.map(d => d._source)) {
-          (item.Emotions || []).filter(
-            emotion => emotion.Confidence >= this.Confidence
-          ).forEach(
-            emotion => es_data.push({ "Name": emotion.Type, "Timestamp": item.Timestamp })
-          );
 
-          [
-            "Beard",
-            "Eyeglasses",
-            "EyesOpen",
-            "MouthOpen",
-            "Mustache",
-            "Smile",
-            "Sunglasses"
-          ].filter(
-            feature => feature in item
-          ).filter(
-            feature => item[feature].Confidence > this.Confidence
-          ).forEach(
-            feature => es_data.push({ "Name": feature, "Timestamp": item.Timestamp })
-          );
-
-          if ("Gender" in item) {
-            es_data.push({ "Name": item.Gender.Value, "Timestamp": item.Timestamp })
-          }
-          if ("BoundingBox" in item) {
+          if ("FaceBoundingBox" in item) {
             es_data.push({
-              "Name": "Face",
+              "Name": item.ExternalImageId,
               "Timestamp": item.Timestamp,
               "Confidence": item.Confidence,
-              "BoundingBox": {
-                "Width": item.BoundingBox.Width,
-                "Height": item.BoundingBox.Height,
-                "Left": item.BoundingBox.Left,
-                "Top": item.BoundingBox.Top
+              "FaceBoundingBox": {
+                "Width": item.FaceBoundingBox.Width,
+                "Height": item.FaceBoundingBox.Height,
+                "Left": item.FaceBoundingBox.Left,
+                "Top": item.FaceBoundingBox.Top
               }
             })
           }
