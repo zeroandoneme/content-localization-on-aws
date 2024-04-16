@@ -1,0 +1,4 @@
+# run this project using node 18.9.0
+# use the branch v1.0.0
+# build project locally then drag n drop to s3 bucket
+# clear cloudfront cache
