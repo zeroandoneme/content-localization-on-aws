@@ -30,7 +30,7 @@ s3 = boto3.client('s3', config=config)
 
 # These names are the lowercase version of OPERATOR_NAME defined in /source/operators/operator-library.yaml
 supported_operators = ["textdetection", "mediainfo", "transcribeaudio", "transcribevideo", "translate",
-                       "genericdatalookup", "labeldetection", "celebrityrecognition", "face_search",
+                       "genericdatalookup", "labeldetection", "celebrityrecognition", "facesearch",
                        "contentmoderation", "facedetection", "key_phrases", "entities", "webcaptions", "shotdetection",
                        "technicalcuedetection"]
 
@@ -256,11 +256,15 @@ def process_content_moderation(asset, workflow, results):
 
 
 def process_face_search(asset, workflow, results):
+    print("process_face_search")
     metadata = json.loads(results)
+    print("process_face_search metadata")
     es = connect_es(es_endpoint)
+    print("process_face_search connect_es")
 
     extracted_items = []
     if isinstance(metadata, list):
+        print(f"metadata {metadata}")
         for page in metadata:
             if "Persons" in page:
                 for item in page["Persons"]:
@@ -272,6 +276,7 @@ def process_face_search(asset, workflow, results):
                         item["PersonBoundingBox"] = item["Person"]["BoundingBox"]
                     # flatten face key
                     if "Face" in item["Person"]:
+                        print("process_face_search Face")
                         item["FaceBoundingBox"] = item["Person"]["Face"]["BoundingBox"]
                         item["FaceLandmarks"] = item["Person"]["Face"]["Landmarks"]
                         item["FacePose"] = item["Person"]["Face"]["Pose"]
@@ -287,6 +292,8 @@ def process_face_search(asset, workflow, results):
                             item["MatchingKnownFaceId"] = face["Face"]["FaceId"]
                             item["KnownFaceBoundingBox"] = face["Face"]["BoundingBox"]
                             item["ImageId"] = face["Face"]["ImageId"]
+                            external_image_id = face["Face"]["ExternalImageId"]
+                            item["ExternalImageId"] = external_image_id.split('.')[0] # Split and take the first part
                         del item["FaceMatches"]
                     else:
                         item["ContainsKnownFace"] = False
@@ -296,6 +303,7 @@ def process_face_search(asset, workflow, results):
 
     else:
         if "Persons" in metadata:
+            print(f"metadata {metadata}")
             for item in metadata["Persons"]:
                 item["Operator"] = "face_search"
                 item["Workflow"] = workflow
@@ -320,13 +328,19 @@ def process_face_search(asset, workflow, results):
                         item["MatchingKnownFaceId"] = face["Face"]["FaceId"]
                         item["KnownFaceBoundingBox"] = face["Face"]["BoundingBox"]
                         item["ImageId"] = face["Face"]["ImageId"]
+                        # Split the ExternalImageId to exclude extension
+                        external_image_id = face["Face"]["ExternalImageId"]
+                        item["ExternalImageId"] = external_image_id.split('.')[0] # Split and take the first part
                     del item["FaceMatches"]
                 else:
                     item["ContainsKnownFace"] = False
                 del item["Person"]
 
+                print(f"item {item}")
                 extracted_items.append(item)
-
+    
+    print("process_face_search end if else")
+    print(f"extracted_items {extracted_items}")
     bulk_index(es, asset, "face_search", extracted_items)
 
 
@@ -977,7 +991,8 @@ def lambda_handler(event, context):
                             process_content_moderation(asset_id, workflow, metadata["Results"])
                         if operator == "facedetection":
                             process_face_detection(asset_id, workflow, metadata["Results"])
-                        if operator == "face_search":
+                        if operator == "facesearch":
+                            print("operator == facesearch")
                             process_face_search(asset_id, workflow, metadata["Results"])
                         if operator == "entities":
                             process_entities(asset_id, workflow, metadata["Results"])
